@@ -56,6 +56,30 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Ajax Requests]]></title>
+      <url>https://quasar-framework.org/guide/ajax-requests.html</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>Quasar recommends Axios during project initialization: <code>Use Axios for Ajax calls? (Y/n)</code></p>
+</blockquote>
+<p>Then you should create a new plugin <code>axios.js</code> that looks like this:<br>(Here you can also specify additional settings for your axios instance)<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import axios from &apos;axios&apos;</span><br><span class="line"></span><br><span class="line">export default (&#123;app, router, Vue&#125;) =&gt; &#123;</span><br><span class="line">  Vue.prototype.$axios = axios</span><br><span class="line">  // ^ ^ ^ this will allow you to use this.$axios</span><br><span class="line">  //       so you won&apos;t necessarily have to import axios in each vue file</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Usage in your single file components methods will be like:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">methods: &#123;</span><br><span class="line">  loadData () &#123;</span><br><span class="line">    this.$axios.get(&apos;/api/backend&apos;)</span><br><span class="line">      .then((response) =&gt; &#123;</span><br><span class="line">        this.data = response.data</span><br><span class="line">      &#125;)</span><br><span class="line">      .catch(() =&gt; &#123;</span><br><span class="line">        this.$q.notify(&#123;</span><br><span class="line">          color: &apos;negative&apos;,</span><br><span class="line">          position: &apos;top&apos;,</span><br><span class="line">          message: &apos;Loading failed&apos;,</span><br><span class="line">          icon: &apos;report_problem&apos;</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure></p>
+<p>Usage in Vuex Actions for globally adding headers to axios (such as during authentication):<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import axios from &apos;axios&apos;</span><br><span class="line"></span><br><span class="line">export function register (&#123;commit&#125;, form) &#123;</span><br><span class="line">  return axios.post(&apos;api/auth/register&apos;, form)</span><br><span class="line">    .then(response =&gt; &#123;</span><br><span class="line">      commit(&apos;login&apos;, &#123;token: response.data.token, user: response.data.user&#125;)</span><br><span class="line">      setAxiosHeaders(response.data.token)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function setAxiosHeaders (token) &#123;</span><br><span class="line">  axios.defaults.headers.common[&apos;Authorization&apos;] = &apos;Bearer &apos; + token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Also look at <a href="https://github.com/axios/axios" target="_blank" rel="noopener">Axios docs</a> for more information.</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[API Proxying for Dev]]></title>
+      <url>https://quasar-framework.org/guide/app-api-proxying.html</url>
+      <content type="html"><![CDATA[<p>When integrating a project folder with Quasar CLI and the Main Starter Kit with an existing backend, a common need is to access the backend API when using the dev server. To achieve this, we can run the dev server and the API backend side-by-side (or remotely), and let the dev server proxy all API requests to the actual backend.</p>
+<p>This is useful if you access relative paths in your API requests. Obviously, these relative paths will probably not work while you are developing. In order to create an environment similar to the one used by your deployed website/app, you can proxy your API requests.</p>
+<p>To configure the proxy rules, edit <code>/quasar.conf.js</code> in <code>devServer.proxy</code>. You should refer to <a href="https://webpack.js.org/configuration/dev-server/#devserver-proxy" target="_blank" rel="noopener">Webpack Dev Server Proxy</a> docs for detailed usage. But here’s a simple example:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line"></span><br><span class="line">devServer: &#123;</span><br><span class="line">  proxy: &#123;</span><br><span class="line">    <span class="comment">// proxy all requests starting with /api to jsonplaceholder</span></span><br><span class="line">    <span class="string">'/api'</span>: &#123;</span><br><span class="line">      target: <span class="string">'http://some.api.target.com:7070'</span>,</span><br><span class="line">      changeOrigin: <span class="literal">true</span>,</span><br><span class="line">      pathRewrite: &#123;</span><br><span class="line">        <span class="string">'^/api'</span>: <span class="string">''</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The above example will proxy the request <code>/api/posts/1</code> to <code>http://some.api.target.com:7070/posts/1</code>.</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Adding Pages and Layouts]]></title>
       <url>https://quasar-framework.org/guide/app-adding-pages-and-layouts.html</url>
       <content type="html"><![CDATA[<p>Your Pages (<code>/src/pages</code>) and Layouts (<code>/src/layouts</code>) are injected into your website/app (and also managed) through Vue Router in <code>/src/router/routes.js</code>. Each Page and Layout needs to be referenced there.</p>
@@ -75,19 +99,6 @@
 <blockquote>
 <p>For further in-detail reading please take a look on <a href="https://router.vuejs.org/en/essentials/nested-routes.html#" target="_blank" rel="noopener">Vue Router</a> documentation.</p>
 </blockquote>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Ajax Requests]]></title>
-      <url>https://quasar-framework.org/guide/ajax-requests.html</url>
-      <content type="html"><![CDATA[<blockquote>
-<p>Quasar recommends Axios during project initialization: <code>Use Axios for Ajax calls? (Y/n)</code></p>
-</blockquote>
-<p>Then you should create a new plugin <code>axios.js</code> that looks like this:<br>(Here you can also specify additional settings for your axios instance)<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import axios from &apos;axios&apos;</span><br><span class="line"></span><br><span class="line">export default (&#123;app, router, Vue&#125;) =&gt; &#123;</span><br><span class="line">  Vue.prototype.$axios = axios</span><br><span class="line">  // ^ ^ ^ this will allow you to use this.$axios</span><br><span class="line">  //       so you won&apos;t necessarily have to import axios in each vue file</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Usage in your single file components methods will be like:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">methods: &#123;</span><br><span class="line">  loadData () &#123;</span><br><span class="line">    this.$axios.get(&apos;/api/backend&apos;)</span><br><span class="line">      .then((response) =&gt; &#123;</span><br><span class="line">        this.data = response.data</span><br><span class="line">      &#125;)</span><br><span class="line">      .catch(() =&gt; &#123;</span><br><span class="line">        this.$q.notify(&#123;</span><br><span class="line">          color: &apos;negative&apos;,</span><br><span class="line">          position: &apos;top&apos;,</span><br><span class="line">          message: &apos;Loading failed&apos;,</span><br><span class="line">          icon: &apos;report_problem&apos;</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure></p>
-<p>Usage in Vuex Actions for globally adding headers to axios (such as during authentication):<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import axios from &apos;axios&apos;</span><br><span class="line"></span><br><span class="line">export function register (&#123;commit&#125;, form) &#123;</span><br><span class="line">  return axios.post(&apos;api/auth/register&apos;, form)</span><br><span class="line">    .then(response =&gt; &#123;</span><br><span class="line">      commit(&apos;login&apos;, &#123;token: response.data.token, user: response.data.user&#125;)</span><br><span class="line">      setAxiosHeaders(response.data.token)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function setAxiosHeaders (token) &#123;</span><br><span class="line">  axios.defaults.headers.common[&apos;Authorization&apos;] = &apos;Bearer &apos; + token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Also look at <a href="https://github.com/axios/axios" target="_blank" rel="noopener">Axios docs</a> for more information.</p>
 ]]></content>
     </entry>
     
@@ -123,17 +134,6 @@
 <li>CSS across all components extracted (and auto-prefixed) into a single file and minified with <a href="https://github.com/ben-eb/cssnano" target="_blank" rel="noopener">cssnano</a></li>
 <li>All static assets are compiled with version hashes for efficient long-term caching, and a production index.html is auto-generated with proper URLs to these generated assets.</li>
 </ul>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[API Proxying for Dev]]></title>
-      <url>https://quasar-framework.org/guide/app-api-proxying.html</url>
-      <content type="html"><![CDATA[<p>When integrating a project folder with Quasar CLI and the Main Starter Kit with an existing backend, a common need is to access the backend API when using the dev server. To achieve this, we can run the dev server and the API backend side-by-side (or remotely), and let the dev server proxy all API requests to the actual backend.</p>
-<p>This is useful if you access relative paths in your API requests. Obviously, these relative paths will probably not work while you are developing. In order to create an environment similar to the one used by your deployed website/app, you can proxy your API requests.</p>
-<p>To configure the proxy rules, edit <code>/quasar.conf.js</code> in <code>devServer.proxy</code>. You should refer to <a href="https://webpack.js.org/configuration/dev-server/#devserver-proxy" target="_blank" rel="noopener">Webpack Dev Server Proxy</a> docs for detailed usage. But here’s a simple example:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line"></span><br><span class="line">devServer: &#123;</span><br><span class="line">  proxy: &#123;</span><br><span class="line">    <span class="comment">// proxy all requests starting with /api to jsonplaceholder</span></span><br><span class="line">    <span class="string">'/api'</span>: &#123;</span><br><span class="line">      target: <span class="string">'http://some.api.target.com:7070'</span>,</span><br><span class="line">      changeOrigin: <span class="literal">true</span>,</span><br><span class="line">      pathRewrite: &#123;</span><br><span class="line">        <span class="string">'^/api'</span>: <span class="string">''</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>The above example will proxy the request <code>/api/posts/1</code> to <code>http://some.api.target.com:7070/posts/1</code>.</p>
 ]]></content>
     </entry>
     
@@ -312,88 +312,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[App Pre-Processors & Webpack]]></title>
-      <url>https://quasar-framework.org/guide/app-pre-processors-and-webpack.html</url>
-      <content type="html"><![CDATA[<p>The build system uses Webpack to create your website/app. Don’t worry if you aren’t acquainted with Webpack. Out of the box, you won’t need to configure it because it already has everything set up.</p>
-<p>However, for cases where you need to tweak the default Webpack config you can do so by editing <code>/quasar.conf.js</code> and configuring <code>build &gt; extendWebpack (cfg)</code> method or (CLI v0.16.2+) <code>build &gt; chainWebpack (chain)</code>.</p>
-<p>Example of adding ESLint loader to it (assuming you’ve installed it):<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      enforce: <span class="string">'pre'</span>,</span><br><span class="line">      test: <span class="regexp">/\.(js|vue)$/</span>,</span><br><span class="line">      loader: <span class="string">'eslint-loader'</span>,</span><br><span class="line">      exclude: <span class="regexp">/(node_modules|quasar)/</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Notice that you don’t need to return anything. The parameter of extendWebpack(cfg) is the Webpack configuration Object generated by Quasar for you. You can add/remove/replace anything from it, assuming you really know what you are doing.</p>
-<p>Equivalent quasar.conf for chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'eslint'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.(js|vue)$/</span>)</span><br><span class="line">      .enforce(<span class="string">'pre'</span>)</span><br><span class="line">      .exclude(<span class="regexp">/(node_modules|quasar)/</span>)</span><br><span class="line">      .use(<span class="string">'eslint-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'eslint-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Let’s discuss about Webpack loaders now. It’s probably where you’ll make the most additions.</p>
-<h2 id="Webpack-Aliases"><a href="#Webpack-Aliases" class="headerlink" title="Webpack Aliases"></a>Webpack Aliases</h2><p>Quasar comes with a bunch of useful Webpack aliases preconfigured.<br>You can use them anywhere in your project and webpack will resolve the correct path. If you want to add you own alias, se the section about <a href="/guide/app-quasar.conf.js.html#Adding-you-own-alias-to-Webpack">adding your own alias to Webpack</a>.</p>
-<table>
-<thead>
-<tr>
-<th>Alias</th>
-<th>Resolves to</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>quasar</code></td>
-<td><code>node_modules/quasar-framework/dist/quasar.&lt;configured-theme&gt;.esm.js</code></td>
-</tr>
-<tr>
-<td><code>src</code></td>
-<td><code>/src</code></td>
-</tr>
-<tr>
-<td><code>components</code></td>
-<td><code>/src/components</code></td>
-</tr>
-<tr>
-<td><code>layouts</code></td>
-<td><code>/src/layouts</code></td>
-</tr>
-<tr>
-<td><code>pages</code></td>
-<td><code>/src/pages</code></td>
-</tr>
-<tr>
-<td><code>assets</code></td>
-<td><code>/src/assets</code></td>
-</tr>
-<tr>
-<td><code>plugins</code></td>
-<td><code>/src/plugins</code></td>
-</tr>
-<tr>
-<td><code>variables</code></td>
-<td><code>/.quasar/variables.styl</code></td>
-</tr>
-</tbody>
-</table>
-<p>Also if you configure to build with the Vue compiler version (build &gt; vueCompiler: true), <code>vue$</code> resolves to  <code>vue/dist/vue.esm.js</code>.</p>
-<h2 id="Webpack-Loaders"><a href="#Webpack-Loaders" class="headerlink" title="Webpack Loaders"></a>Webpack Loaders</h2><p>The build system uses Webpack, so it relies on using webpack loaders to handle different types of files (js, css, styl, scss, json, and so on). By default, the most used loaders are provided by default.</p>
-<h3 id="Installing-loaders"><a href="#Installing-loaders" class="headerlink" title="Installing loaders:"></a>Installing loaders:</h3><p>Let’s take an example. You want to be able to import <code>.json</code> files. <strong>Out of the box, Quasar supplies json support so you don’t actually need to follow these steps, but for the sake of demonstrating how to add a loader, we’ll pretend Quasar doesn’t offer it.</strong></p>
-<p>So, you need a loader for it. You search Google to see what webpack loader you need. In this case, it’s “json-loader”. We first install it:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev json-loader</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev json-loader</span><br></pre></td></tr></table></figure></p>
-<p>After installing your new loader, we want to tell Webpack to use it. So we edit <code>/quasar.conf.js</code> and change <code>build.extendWebpack()</code> to add entries to <code>module/rules</code> for this new loader:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf</span></span><br><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      test: <span class="regexp">/\.json$/</span>,</span><br><span class="line">      loader: <span class="string">'json-loader'</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Equivalent with chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf</span></span><br><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'json'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.json$/</span>)</span><br><span class="line">      .use(<span class="string">'json-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'json-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>And you’re done.</p>
-<h2 id="SASS-SCSS-support"><a href="#SASS-SCSS-support" class="headerlink" title="SASS/SCSS support"></a>SASS/SCSS support</h2><p>So you want to be able to write SASS/SCSS CSS code. You need a loader for it. We first install it. Note that for this particular case you also need to install node-sass because sass-loader depends on it as a peer dependency.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev sass-loader node-sass</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev sass-loader node-sass</span><br></pre></td></tr></table></figure>
-<p>And you’re done. For SCSS/SASS it’s all it takes. You don’t need to further configure <code>/quasar.conf.js</code>.</p>
-<p>Once installed, you can use this pre-processor inside your <code>*.vue</code> components using the lang attribute on <code>&lt;style&gt;</code> tags:</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">lang</span>=<span class="string">"scss"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">/* We can write SASS now! */</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>A note on SASS syntax:</p>
-<ul>
-<li>lang=”scss” corresponds to the CSS-superset syntax (with curly braces and semicolons).</li>
-<li>lang=”sass” corresponds to the indentation-based syntax.</li>
-</ul>
-<h2 id="PostCSS"><a href="#PostCSS" class="headerlink" title="PostCSS"></a>PostCSS</h2><p>Styles in <code>*.vue</code> files (and all other style files) are piped through PostCSS by default, so you don’t need to use a specific loader for it.</p>
-<p>By default, PostCSS is configured to use Autoprefixer. Take a look at `/.postcssrc.js where you can tweak it if you need to.</p>
-<h2 id="Pug"><a href="#Pug" class="headerlink" title="Pug"></a>Pug</h2><p>First, you need to install some dependencies:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev pug pug-plain-loader</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev pug pug-plain-loader</span><br></pre></td></tr></table></figure>
-<p>Then you need to extend the webpack configuration through quasar.conf.js:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      test: <span class="regexp">/\.pug$/</span>,</span><br><span class="line">      loader: <span class="string">'pug-plain-loader'</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Equivalent with chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'pug'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.pug$/</span>)</span><br><span class="line">      .use(<span class="string">'pug-plain-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'pug-plain-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Coffeescript"><a href="#Coffeescript" class="headerlink" title="Coffeescript"></a>Coffeescript</h2><p>If you are using Coffeescript then you need to EITHER disable ESLint OR tell ESLint which Vue components are using Coffeescript.</p>
-<p>Note that <code>vue-loader</code> uses <code>lang=&quot;coffee&quot;</code> to identify components which are using Coffeescript, but <code>lang=&quot;coffee&quot;</code> is not recognizable for ESLint. Fortunately, ESLint (following traditional HTML) uses <code>type=&quot;xxx&quot;</code> to identify the type of scripts. As long as a <code>&lt;script&gt;</code> tag has any <code>type</code> other than <code>javascript</code>, ESLint would mark the script as non-javascript, and skips linting it. Coffeescript’s convention is to use <code>type=&quot;text/coffeescript&quot;</code> to identify itself. Therefore, in your Vue components which are using Coffeescript, using both <code>lang</code> and <code>type</code> to avoid ESLint warnings:</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">lang</span>=<span class="string">"coffee"</span> <span class="attr">type</span>=<span class="string">"text/coffeescript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">  ...</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[App Plugins]]></title>
       <url>https://quasar-framework.org/guide/app-plugins.html</url>
       <content type="html"><![CDATA[<p>A common use case for Quasar applications is to run code before the root Vue instance is instantiated.<br>Quasar provides an elegant solution to that problem by allowing users to define so-called app plugins.</p>
@@ -508,6 +426,88 @@
 <blockquote>
 <p><strong>IMPORTANT</strong><br>Do not forget to have at least one decisional branch where you call <code>new Vue(app)</code> otherwise your app won’t boot and you’ll only see a blank page!</p>
 </blockquote>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[App Pre-Processors & Webpack]]></title>
+      <url>https://quasar-framework.org/guide/app-pre-processors-and-webpack.html</url>
+      <content type="html"><![CDATA[<p>The build system uses Webpack to create your website/app. Don’t worry if you aren’t acquainted with Webpack. Out of the box, you won’t need to configure it because it already has everything set up.</p>
+<p>However, for cases where you need to tweak the default Webpack config you can do so by editing <code>/quasar.conf.js</code> and configuring <code>build &gt; extendWebpack (cfg)</code> method or (CLI v0.16.2+) <code>build &gt; chainWebpack (chain)</code>.</p>
+<p>Example of adding ESLint loader to it (assuming you’ve installed it):<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      enforce: <span class="string">'pre'</span>,</span><br><span class="line">      test: <span class="regexp">/\.(js|vue)$/</span>,</span><br><span class="line">      loader: <span class="string">'eslint-loader'</span>,</span><br><span class="line">      exclude: <span class="regexp">/(node_modules|quasar)/</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Notice that you don’t need to return anything. The parameter of extendWebpack(cfg) is the Webpack configuration Object generated by Quasar for you. You can add/remove/replace anything from it, assuming you really know what you are doing.</p>
+<p>Equivalent quasar.conf for chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'eslint'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.(js|vue)$/</span>)</span><br><span class="line">      .enforce(<span class="string">'pre'</span>)</span><br><span class="line">      .exclude(<span class="regexp">/(node_modules|quasar)/</span>)</span><br><span class="line">      .use(<span class="string">'eslint-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'eslint-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Let’s discuss about Webpack loaders now. It’s probably where you’ll make the most additions.</p>
+<h2 id="Webpack-Aliases"><a href="#Webpack-Aliases" class="headerlink" title="Webpack Aliases"></a>Webpack Aliases</h2><p>Quasar comes with a bunch of useful Webpack aliases preconfigured.<br>You can use them anywhere in your project and webpack will resolve the correct path. If you want to add you own alias, se the section about <a href="/guide/app-quasar.conf.js.html#Adding-you-own-alias-to-Webpack">adding your own alias to Webpack</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>Resolves to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>quasar</code></td>
+<td><code>node_modules/quasar-framework/dist/quasar.&lt;configured-theme&gt;.esm.js</code></td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td><code>/src</code></td>
+</tr>
+<tr>
+<td><code>components</code></td>
+<td><code>/src/components</code></td>
+</tr>
+<tr>
+<td><code>layouts</code></td>
+<td><code>/src/layouts</code></td>
+</tr>
+<tr>
+<td><code>pages</code></td>
+<td><code>/src/pages</code></td>
+</tr>
+<tr>
+<td><code>assets</code></td>
+<td><code>/src/assets</code></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td><code>/src/plugins</code></td>
+</tr>
+<tr>
+<td><code>variables</code></td>
+<td><code>/.quasar/variables.styl</code></td>
+</tr>
+</tbody>
+</table>
+<p>Also if you configure to build with the Vue compiler version (build &gt; vueCompiler: true), <code>vue$</code> resolves to  <code>vue/dist/vue.esm.js</code>.</p>
+<h2 id="Webpack-Loaders"><a href="#Webpack-Loaders" class="headerlink" title="Webpack Loaders"></a>Webpack Loaders</h2><p>The build system uses Webpack, so it relies on using webpack loaders to handle different types of files (js, css, styl, scss, json, and so on). By default, the most used loaders are provided by default.</p>
+<h3 id="Installing-loaders"><a href="#Installing-loaders" class="headerlink" title="Installing loaders:"></a>Installing loaders:</h3><p>Let’s take an example. You want to be able to import <code>.json</code> files. <strong>Out of the box, Quasar supplies json support so you don’t actually need to follow these steps, but for the sake of demonstrating how to add a loader, we’ll pretend Quasar doesn’t offer it.</strong></p>
+<p>So, you need a loader for it. You search Google to see what webpack loader you need. In this case, it’s “json-loader”. We first install it:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev json-loader</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev json-loader</span><br></pre></td></tr></table></figure></p>
+<p>After installing your new loader, we want to tell Webpack to use it. So we edit <code>/quasar.conf.js</code> and change <code>build.extendWebpack()</code> to add entries to <code>module/rules</code> for this new loader:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf</span></span><br><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      test: <span class="regexp">/\.json$/</span>,</span><br><span class="line">      loader: <span class="string">'json-loader'</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Equivalent with chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf</span></span><br><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'json'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.json$/</span>)</span><br><span class="line">      .use(<span class="string">'json-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'json-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>And you’re done.</p>
+<h2 id="SASS-SCSS-support"><a href="#SASS-SCSS-support" class="headerlink" title="SASS/SCSS support"></a>SASS/SCSS support</h2><p>So you want to be able to write SASS/SCSS CSS code. You need a loader for it. We first install it. Note that for this particular case you also need to install node-sass because sass-loader depends on it as a peer dependency.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev sass-loader node-sass</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev sass-loader node-sass</span><br></pre></td></tr></table></figure>
+<p>And you’re done. For SCSS/SASS it’s all it takes. You don’t need to further configure <code>/quasar.conf.js</code>.</p>
+<p>Once installed, you can use this pre-processor inside your <code>*.vue</code> components using the lang attribute on <code>&lt;style&gt;</code> tags:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">lang</span>=<span class="string">"scss"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">/* We can write SASS now! */</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>A note on SASS syntax:</p>
+<ul>
+<li>lang=”scss” corresponds to the CSS-superset syntax (with curly braces and semicolons).</li>
+<li>lang=”sass” corresponds to the indentation-based syntax.</li>
+</ul>
+<h2 id="PostCSS"><a href="#PostCSS" class="headerlink" title="PostCSS"></a>PostCSS</h2><p>Styles in <code>*.vue</code> files (and all other style files) are piped through PostCSS by default, so you don’t need to use a specific loader for it.</p>
+<p>By default, PostCSS is configured to use Autoprefixer. Take a look at `/.postcssrc.js where you can tweak it if you need to.</p>
+<h2 id="Pug"><a href="#Pug" class="headerlink" title="Pug"></a>Pug</h2><p>First, you need to install some dependencies:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yarn add --dev pug pug-plain-loader</span><br><span class="line"><span class="comment"># or:</span></span><br><span class="line">$ npm install --save-dev pug pug-plain-loader</span><br></pre></td></tr></table></figure>
+<p>Then you need to extend the webpack configuration through quasar.conf.js:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line">build: &#123;</span><br><span class="line">  extendWebpack (cfg) &#123;</span><br><span class="line">    cfg.module.rules.push(&#123;</span><br><span class="line">      test: <span class="regexp">/\.pug$/</span>,</span><br><span class="line">      loader: <span class="string">'pug-plain-loader'</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Equivalent with chainWebpack():<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// quasar.conf.js</span></span><br><span class="line">build: &#123;</span><br><span class="line">  chainWebpack (chain) &#123;</span><br><span class="line">    chain.module.rule(<span class="string">'pug'</span>)</span><br><span class="line">      .test(<span class="regexp">/\.pug$/</span>)</span><br><span class="line">      .use(<span class="string">'pug-plain-loader'</span>)</span><br><span class="line">        .loader(<span class="string">'pug-plain-loader'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Coffeescript"><a href="#Coffeescript" class="headerlink" title="Coffeescript"></a>Coffeescript</h2><p>If you are using Coffeescript then you need to EITHER disable ESLint OR tell ESLint which Vue components are using Coffeescript.</p>
+<p>Note that <code>vue-loader</code> uses <code>lang=&quot;coffee&quot;</code> to identify components which are using Coffeescript, but <code>lang=&quot;coffee&quot;</code> is not recognizable for ESLint. Fortunately, ESLint (following traditional HTML) uses <code>type=&quot;xxx&quot;</code> to identify the type of scripts. As long as a <code>&lt;script&gt;</code> tag has any <code>type</code> other than <code>javascript</code>, ESLint would mark the script as non-javascript, and skips linting it. Coffeescript’s convention is to use <code>type=&quot;text/coffeescript&quot;</code> to identify itself. Therefore, in your Vue components which are using Coffeescript, using both <code>lang</code> and <code>type</code> to avoid ESLint warnings:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">lang</span>=<span class="string">"coffee"</span> <span class="attr">type</span>=<span class="string">"text/coffeescript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">  ...</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
     </entry>
     
@@ -1253,6 +1253,13 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Electron Packages]]></title>
+      <url>https://quasar-framework.org/guide/electron-packages.html</url>
+      <content type="html"><![CDATA[<p>You can npm/yarn install and use <a href="https://electronjs.org/userland/most_downloaded_packages" target="_blank" rel="noopener">Electron specific packages</a> in your app. Take a look at the link and choose wisely if you need to.</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Electron Preparation]]></title>
       <url>https://quasar-framework.org/guide/electron-preparation.html</url>
       <content type="html"><![CDATA[<p>Before we dive in to the actual development, we need to do some preparation work.</p>
@@ -1267,13 +1274,6 @@
 <p>At this point things should successfully install, but if not then you will need a clean installation of Visual Studio. Please note that these are not problems with Quasar, but they are related to NPM and Windows.</p>
 <h2 id="2-Start-Developing"><a href="#2-Start-Developing" class="headerlink" title="2. Start Developing"></a>2. Start Developing</h2><p>If you want to jump right in and start developing, you can skip the previous step with “quasar mode” command and issue:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ quasar dev -m electron -t [mat|ios]</span><br></pre></td></tr></table></figure></p>
 <p>This will add Electron mode automatically, if it is missing.<br>It will open up an Electron window which will render your app along with Developer Tools opened side by side.</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Electron Packages]]></title>
-      <url>https://quasar-framework.org/guide/electron-packages.html</url>
-      <content type="html"><![CDATA[<p>You can npm/yarn install and use <a href="https://electronjs.org/userland/most_downloaded_packages" target="_blank" rel="noopener">Electron specific packages</a> in your app. Take a look at the link and choose wisely if you need to.</p>
 ]]></content>
     </entry>
     
@@ -1296,66 +1296,6 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import path from &apos;path&apos;</span><br><span class="line">import &#123; remote &#125; from &apos;electron&apos;</span><br><span class="line"></span><br><span class="line">const filePath = path.join(remote.app.getPath(&apos;userData&apos;), &apos;/some.file&apos;)</span><br></pre></td></tr></table></figure>
 <h2 id="Debugging-Main-Process"><a href="#Debugging-Main-Process" class="headerlink" title="Debugging Main Process"></a>Debugging Main Process</h2><p>When running your application in development you may have noticed a message from the main process mentioning a remote debugger. Ever since the release of electron@^1.7.2, remote debugging over the Inspect API was introduced and can be easily accessed by opening the provided link with Google Chrome or through another debugger that can remotely attach to the process using the default port of 5858, such as Visual Studio Code.</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┏ Electron -------------------</span><br><span class="line"></span><br><span class="line">  Debugger listening on port 5858.</span><br><span class="line">  Warning: This is an experimental feature and could change at any time.</span><br><span class="line">  To start debugging, open the following URL <span class="keyword">in</span> Chrome:</span><br><span class="line">      chrome-devtools://devtools/bundled/inspector.html?experiments=<span class="literal">true</span>&amp;v8only=<span class="literal">true</span>&amp;ws=127.0.0.1:5858/22271e96-df65-4bab-9207-da8c71117641</span><br><span class="line"></span><br><span class="line">┗ ----------------------------</span><br></pre></td></tr></table></figure>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[UMD Starter Kit - CDN install]]></title>
-      <url>https://quasar-framework.org/guide/embedding-quasar.html</url>
-      <content type="html"><![CDATA[<p>If you want to embed Quasar into your existing website project, integrating it in a progressive manner, then go for the UMD/Standalone (Unified Module Definition) version.</p>
-<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><p>UMD is all about adding Quasar style and javascript tags. This is a full list. Choose only what you use.</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Material Icons? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Fontawesome? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://use.fontawesome.com/releases/v5.0.13/css/all.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Ionicons? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/ionicons@^4.0.0/dist/css/ionicons.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need MDI? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/@mdi/font@^2.0.0/css/materialdesignicons.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need all animations? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/animate.css@^3.5.2/animate.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    Finally, add Quasar's CSS:</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Replace ".mat" with ".ios" for the iOS theme.</span></span><br><span class="line"><span class="comment">    Add ".rtl" for the RTL support (example: quasar.mat.rtl.min.css).</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you want IE support? Replace "0.17.8" with your desired Quasar version --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.ie.polyfills.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- You need Vue too --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/vue@latest/dist/vue.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    Add Quasar's JS:</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Replace ".mat" with ".ios" for the iOS theme.</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    If you want to add a Quasar I18n language pack (other than "en-us").</span></span><br><span class="line"><span class="comment">    Notice "pt-br" in "i18n.pt-br.umd.min.js" for Brazilian Portuguese language pack.</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Also check final &lt;script&gt; tag below to enable the language</span></span><br><span class="line"><span class="comment">    Language pack list: https://github.com/quasarframework/quasar/tree/dev/i18n</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/i18n.pt-br.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    If you want to make Quasar use a specific set of icons (unless you're using Material Icons already).</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Icon sets list: https://github.com/quasarframework/quasar/tree/dev/icons</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/icons.fontawesome.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// if using a Quasar language pack other than the default "en-us";</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// requires the language pack style tag from above</span></span></span><br><span class="line"><span class="javascript">    Quasar.i18n.set(Quasar.i18n.ptBr) <span class="comment">// notice camel-case "ptBr"</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// if you want Quasar components to use a specific icon library</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// other than the default Material Icons;</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// requires the icon set style tag from above</span></span></span><br><span class="line"><span class="javascript">    Quasar.icons.set(Quasar.icons.fontawesome) <span class="comment">// fontawesome is just an example</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">    /*</span></span><br><span class="line"><span class="undefined">      Example kicking off the UI.</span></span><br><span class="line"><span class="javascript">      Obviously, adapt <span class="keyword">this</span> your specific needs.</span></span><br><span class="line"><span class="undefined">     */</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// custom component example, assumes you have a &lt;div id="my-page"&gt;&lt;/div&gt; in your &lt;body&gt;</span></span></span><br><span class="line"><span class="javascript">    Vue.component(<span class="string">'my-page'</span>, &#123;</span></span><br><span class="line"><span class="javascript">      template: <span class="string">'#my-page'</span></span></span><br><span class="line"><span class="undefined">    &#125;)</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// start the UI; assumes you have a &lt;div id="q-app"&gt;&lt;/div&gt; in your &lt;body&gt;</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">      el: <span class="string">'#q-app'</span>,</span></span><br><span class="line"><span class="javascript">      data: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> &#123;&#125;</span></span><br><span class="line"><span class="undefined">      &#125;,</span></span><br><span class="line"><span class="undefined">      methods: &#123;&#125;,</span></span><br><span class="line"><span class="javascript">      <span class="comment">// ...etc</span></span></span><br><span class="line"><span class="undefined">    &#125;)</span></span><br><span class="line"><span class="undefined">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a>Optional</h4><p>One other quick way to get necessary tags based on your requirements is to use the UMD starter kit. It will ask you some questions and will generate a simple HTML file that will show you how to use CDN to add Quasar:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vue init quasarframework/quasar-starter-kit-umd &lt;folder_name&gt;</span><br></pre></td></tr></table></figure>
-<p>And you’re done. Inspect <code>index.html</code> file that was created in the new folder and learn how you can embed Quasar. Notice the <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags and their order.</p>
-<p>Notice that as opposed to the Main Starter Kit, you don’t need to import anything. All components, directives and Quasar plugins are ready to be used out of the box.</p>
-<p>However, the disadvantage is that you won’t benefit from the top notch development experience provided by Quasar CLI – which allows you to simultaneously develop and build SPA, PWA, Mobile and Electron Apps.</p>
-<h3 id="JsFiddle-Codepen"><a href="#JsFiddle-Codepen" class="headerlink" title="JsFiddle / Codepen"></a>JsFiddle / Codepen</h3><p>You can fork and use these links for reporting issues on Github too:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Material Theme</th>
-<th>iOS Theme</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>jsFiddle</td>
-<td><a href="https://jsfiddle.net/rstoenescu/waugrryy/" target="_blank" rel="noopener">https://jsfiddle.net/rstoenescu/waugrryy/</a></td>
-<td><a href="https://jsfiddle.net/rstoenescu/7gu065yg/" target="_blank" rel="noopener">https://jsfiddle.net/rstoenescu/7gu065yg/</a></td>
-</tr>
-<tr>
-<td>Codepen</td>
-<td><a href="https://codepen.io/rstoenescu/pen/KQRZJg" target="_blank" rel="noopener">https://codepen.io/rstoenescu/pen/KQRZJg</a></td>
-<td><a href="https://codepen.io/rstoenescu/pen/paVpBN" target="_blank" rel="noopener">https://codepen.io/rstoenescu/pen/paVpBN</a></td>
-</tr>
-</tbody>
-</table>
-<p>These links (obviously) use the Quasar UMD version.</p>
-<h2 id="Quasar-Global-Object"><a href="#Quasar-Global-Object" class="headerlink" title="Quasar Global Object"></a>Quasar Global Object</h2><p>When you embed Quasar UMD into a webpage you’ll get a <code>Quasar</code> global Object injected:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar = &#123;</span><br><span class="line">  version,</span><br><span class="line">  theme: <span class="string">'mat'</span>, <span class="comment">// or 'ios', based on the theme you are using from CDN</span></span><br><span class="line">                <span class="comment">// -- must match both .js and .css CDN links to point to same theme</span></span><br><span class="line">  plugins,</span><br><span class="line">  utils,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// if you want to extend Quasar's components or directives</span></span><br><span class="line">  components,</span><br><span class="line">  directives,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// if you want to change current icon set or Quasar I18n language</span></span><br><span class="line">  <span class="comment">// (must include CDN links so they are available first!)</span></span><br><span class="line">  i18n,</span><br><span class="line">  icons</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Init-Configuration"><a href="#Init-Configuration" class="headerlink" title="Init Configuration"></a>Init Configuration</h2><p><em>Requires Quasar v0.17+</em><br>There are some configuration options for Quasar &amp; Quasar plugins. For the Quasar UMD version you can define the following before including the Quasar script tag:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="comment">// optional</span></span><br><span class="line">  <span class="built_in">window</span>.quasarConfig = &#123;</span><br><span class="line">    brand: &#123; <span class="comment">// this will NOT work on IE 11</span></span><br><span class="line">      primary: <span class="string">'#e46262'</span>,</span><br><span class="line">      <span class="comment">// ... or all other brand colors</span></span><br><span class="line">    &#125;,</span><br><span class="line">    notify: &#123;...&#125;, <span class="comment">// default set of options for Notify Quasar plugin</span></span><br><span class="line">    loading: &#123;...&#125;, <span class="comment">// default set of options for Loading Quasar plugin</span></span><br><span class="line">    loadingBar: &#123; ... &#125; <span class="comment">// settings for LoadingBar Quasar plugin</span></span><br><span class="line">  &#125;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><p>So, after you figured out the CDN links that you need to embed into your webpages (hopefully you’ve inspected the project folder created by UMD Starter Kit), now it’s time to use Quasar.</p>
-<blockquote>
-<p>You’ll notice that all the Quasar Components, Quasar Directives and Quasar Plugins have an installation section at the top of their pages. When using UMD, you can skip this section, as it is intended only for when your project is generated from the <a href="/app-installation.html">Main Starter Kit</a>.</p>
-</blockquote>
-<p>By using the UMD version, you’ll have all of the components, directives and Quasar plugins already installed for you. You just need to start using them.</p>
-<p><strong>Do not use self-closing tags with the UMD version:</strong><br>You will notice that you won’t be able to use the self-closing tag form of any of the components. You must close all components tags.</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- In docs, but for Main Starter Kit usage --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- ^^^ can't use it like this on UMD --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Instead, include a self-closing tag too: --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span>&gt;</span><span class="tag">&lt;/<span class="name">q-btn</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="Quasar-Components"><a href="#Quasar-Components" class="headerlink" title="Quasar Components"></a>Quasar Components</h3><p>An example. No need to install any component in UMD version.</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span>&gt;</span><span class="tag">&lt;/<span class="name">q-btn</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="Quasar-Directives"><a href="#Quasar-Directives" class="headerlink" title="Quasar Directives"></a>Quasar Directives</h3><p>An example. No need to install any directives in UMD version.<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-ripple</span>&gt;</span>...<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="Quasar-Plugins"><a href="#Quasar-Plugins" class="headerlink" title="Quasar Plugins"></a>Quasar Plugins</h3><p>An example. No need to install any plugins in UMD version.</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.plugins.actionSheet.create(&#123;...&#125;)</span><br></pre></td></tr></table></figure>
-<h3 id="Quasar-Utils"><a href="#Quasar-Utils" class="headerlink" title="Quasar Utils"></a>Quasar Utils</h3><p>An example.</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.utils.event.getEventKey(evt)</span><br></pre></td></tr></table></figure>
-<h3 id="Changing-Quasar-Icon-Set"><a href="#Changing-Quasar-Icon-Set" class="headerlink" title="Changing Quasar Icon Set"></a>Changing Quasar Icon Set</h3><p>Assuming you have already included the CDN link to your favorite Quasar Icon Set (unless you’re using Material Icons which is used by default), you can then tell Quasar to use it:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.icons.set(Quasar.icons.fontawesome)</span><br></pre></td></tr></table></figure>
-<h3 id="Changing-Quasar-I18n-Language"><a href="#Changing-Quasar-I18n-Language" class="headerlink" title="Changing Quasar I18n Language"></a>Changing Quasar I18n Language</h3><p>Assuming you have already included the CDN link to your desired Quasar I18n Language (unless you want “en-us” language pack which is used by default), you can then tell Quasar to use it:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// example setting German language,</span></span><br><span class="line"><span class="comment">// using ISO 2 letter code:</span></span><br><span class="line">Quasar.i18n.set(Quasar.i18n.de)</span><br><span class="line"></span><br><span class="line"><span class="comment">// example setting Portuguese (Brazil) language:</span></span><br><span class="line">Quasar.i18n.set(Quasar.i18n.ptBr)</span><br></pre></td></tr></table></figure>
-<p>The list of available languages can be found on <a href="https://github.com/quasarframework/quasar/tree/dev/i18n" target="_blank" rel="noopener">Github</a>. <strong>If your desired language pack is not available yet, you can help by providing a PR. We welcome any languages!</strong></p>
 ]]></content>
     </entry>
     
@@ -1494,6 +1434,66 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd my-app</span><br><span class="line">vue add quasar</span><br></pre></td></tr></table></figure>
 <p>It will ask you if you want the plugin to replace some existing files. It is recommended that you do it if you wish to have an example so you can quickly develop your app.</p>
 <p>Your Vue config (in package.json or vue.config.js file, depending on what you chose when you created your vue app) will also contain a <code>quasar</code> Object. Most important property is <code>theme</code> (with possible values “mat” or “ios”), which you can later change should you want.</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[UMD Starter Kit - CDN install]]></title>
+      <url>https://quasar-framework.org/guide/embedding-quasar.html</url>
+      <content type="html"><![CDATA[<p>If you want to embed Quasar into your existing website project, integrating it in a progressive manner, then go for the UMD/Standalone (Unified Module Definition) version.</p>
+<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><p>UMD is all about adding Quasar style and javascript tags. This is a full list. Choose only what you use.</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Material Icons? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Fontawesome? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://use.fontawesome.com/releases/v5.0.13/css/all.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need Ionicons? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/ionicons@^4.0.0/dist/css/ionicons.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need MDI? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/@mdi/font@^2.0.0/css/materialdesignicons.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you need all animations? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/animate.css@^3.5.2/animate.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    Finally, add Quasar's CSS:</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Replace ".mat" with ".ios" for the iOS theme.</span></span><br><span class="line"><span class="comment">    Add ".rtl" for the RTL support (example: quasar.mat.rtl.min.css).</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.min.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Do you want IE support? Replace "0.17.8" with your desired Quasar version --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.ie.polyfills.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- You need Vue too --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/vue@latest/dist/vue.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    Add Quasar's JS:</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Replace ".mat" with ".ios" for the iOS theme.</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    If you want to add a Quasar I18n language pack (other than "en-us").</span></span><br><span class="line"><span class="comment">    Notice "pt-br" in "i18n.pt-br.umd.min.js" for Brazilian Portuguese language pack.</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Also check final &lt;script&gt; tag below to enable the language</span></span><br><span class="line"><span class="comment">    Language pack list: https://github.com/quasarframework/quasar/tree/dev/i18n</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/i18n.pt-br.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    If you want to make Quasar use a specific set of icons (unless you're using Material Icons already).</span></span><br><span class="line"><span class="comment">    Replace version below (0.17.8) with your desired version of Quasar.</span></span><br><span class="line"><span class="comment">    Icon sets list: https://github.com/quasarframework/quasar/tree/dev/icons</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/icons.fontawesome.umd.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// if using a Quasar language pack other than the default "en-us";</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// requires the language pack style tag from above</span></span></span><br><span class="line"><span class="javascript">    Quasar.i18n.set(Quasar.i18n.ptBr) <span class="comment">// notice camel-case "ptBr"</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// if you want Quasar components to use a specific icon library</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// other than the default Material Icons;</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// requires the icon set style tag from above</span></span></span><br><span class="line"><span class="javascript">    Quasar.icons.set(Quasar.icons.fontawesome) <span class="comment">// fontawesome is just an example</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">    /*</span></span><br><span class="line"><span class="undefined">      Example kicking off the UI.</span></span><br><span class="line"><span class="javascript">      Obviously, adapt <span class="keyword">this</span> your specific needs.</span></span><br><span class="line"><span class="undefined">     */</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// custom component example, assumes you have a &lt;div id="my-page"&gt;&lt;/div&gt; in your &lt;body&gt;</span></span></span><br><span class="line"><span class="javascript">    Vue.component(<span class="string">'my-page'</span>, &#123;</span></span><br><span class="line"><span class="javascript">      template: <span class="string">'#my-page'</span></span></span><br><span class="line"><span class="undefined">    &#125;)</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// start the UI; assumes you have a &lt;div id="q-app"&gt;&lt;/div&gt; in your &lt;body&gt;</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">      el: <span class="string">'#q-app'</span>,</span></span><br><span class="line"><span class="javascript">      data: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> &#123;&#125;</span></span><br><span class="line"><span class="undefined">      &#125;,</span></span><br><span class="line"><span class="undefined">      methods: &#123;&#125;,</span></span><br><span class="line"><span class="javascript">      <span class="comment">// ...etc</span></span></span><br><span class="line"><span class="undefined">    &#125;)</span></span><br><span class="line"><span class="undefined">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a>Optional</h4><p>One other quick way to get necessary tags based on your requirements is to use the UMD starter kit. It will ask you some questions and will generate a simple HTML file that will show you how to use CDN to add Quasar:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vue init quasarframework/quasar-starter-kit-umd &lt;folder_name&gt;</span><br></pre></td></tr></table></figure>
+<p>And you’re done. Inspect <code>index.html</code> file that was created in the new folder and learn how you can embed Quasar. Notice the <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags and their order.</p>
+<p>Notice that as opposed to the Main Starter Kit, you don’t need to import anything. All components, directives and Quasar plugins are ready to be used out of the box.</p>
+<p>However, the disadvantage is that you won’t benefit from the top notch development experience provided by Quasar CLI – which allows you to simultaneously develop and build SPA, PWA, Mobile and Electron Apps.</p>
+<h3 id="JsFiddle-Codepen"><a href="#JsFiddle-Codepen" class="headerlink" title="JsFiddle / Codepen"></a>JsFiddle / Codepen</h3><p>You can fork and use these links for reporting issues on Github too:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Material Theme</th>
+<th>iOS Theme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jsFiddle</td>
+<td><a href="https://jsfiddle.net/rstoenescu/waugrryy/" target="_blank" rel="noopener">https://jsfiddle.net/rstoenescu/waugrryy/</a></td>
+<td><a href="https://jsfiddle.net/rstoenescu/7gu065yg/" target="_blank" rel="noopener">https://jsfiddle.net/rstoenescu/7gu065yg/</a></td>
+</tr>
+<tr>
+<td>Codepen</td>
+<td><a href="https://codepen.io/rstoenescu/pen/KQRZJg" target="_blank" rel="noopener">https://codepen.io/rstoenescu/pen/KQRZJg</a></td>
+<td><a href="https://codepen.io/rstoenescu/pen/paVpBN" target="_blank" rel="noopener">https://codepen.io/rstoenescu/pen/paVpBN</a></td>
+</tr>
+</tbody>
+</table>
+<p>These links (obviously) use the Quasar UMD version.</p>
+<h2 id="Quasar-Global-Object"><a href="#Quasar-Global-Object" class="headerlink" title="Quasar Global Object"></a>Quasar Global Object</h2><p>When you embed Quasar UMD into a webpage you’ll get a <code>Quasar</code> global Object injected:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar = &#123;</span><br><span class="line">  version,</span><br><span class="line">  theme: <span class="string">'mat'</span>, <span class="comment">// or 'ios', based on the theme you are using from CDN</span></span><br><span class="line">                <span class="comment">// -- must match both .js and .css CDN links to point to same theme</span></span><br><span class="line">  plugins,</span><br><span class="line">  utils,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// if you want to extend Quasar's components or directives</span></span><br><span class="line">  components,</span><br><span class="line">  directives,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// if you want to change current icon set or Quasar I18n language</span></span><br><span class="line">  <span class="comment">// (must include CDN links so they are available first!)</span></span><br><span class="line">  i18n,</span><br><span class="line">  icons</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Init-Configuration"><a href="#Init-Configuration" class="headerlink" title="Init Configuration"></a>Init Configuration</h2><p><em>Requires Quasar v0.17+</em><br>There are some configuration options for Quasar &amp; Quasar plugins. For the Quasar UMD version you can define the following before including the Quasar script tag:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="comment">// optional</span></span><br><span class="line">  <span class="built_in">window</span>.quasarConfig = &#123;</span><br><span class="line">    brand: &#123; <span class="comment">// this will NOT work on IE 11</span></span><br><span class="line">      primary: <span class="string">'#e46262'</span>,</span><br><span class="line">      <span class="comment">// ... or all other brand colors</span></span><br><span class="line">    &#125;,</span><br><span class="line">    notify: &#123;...&#125;, <span class="comment">// default set of options for Notify Quasar plugin</span></span><br><span class="line">    loading: &#123;...&#125;, <span class="comment">// default set of options for Loading Quasar plugin</span></span><br><span class="line">    loadingBar: &#123; ... &#125; <span class="comment">// settings for LoadingBar Quasar plugin</span></span><br><span class="line">  &#125;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><p>So, after you figured out the CDN links that you need to embed into your webpages (hopefully you’ve inspected the project folder created by UMD Starter Kit), now it’s time to use Quasar.</p>
+<blockquote>
+<p>You’ll notice that all the Quasar Components, Quasar Directives and Quasar Plugins have an installation section at the top of their pages. When using UMD, you can skip this section, as it is intended only for when your project is generated from the <a href="/app-installation.html">Main Starter Kit</a>.</p>
+</blockquote>
+<p>By using the UMD version, you’ll have all of the components, directives and Quasar plugins already installed for you. You just need to start using them.</p>
+<p><strong>Do not use self-closing tags with the UMD version:</strong><br>You will notice that you won’t be able to use the self-closing tag form of any of the components. You must close all components tags.</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- In docs, but for Main Starter Kit usage --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- ^^^ can't use it like this on UMD --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Instead, include a self-closing tag too: --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span>&gt;</span><span class="tag">&lt;/<span class="name">q-btn</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Quasar-Components"><a href="#Quasar-Components" class="headerlink" title="Quasar Components"></a>Quasar Components</h3><p>An example. No need to install any component in UMD version.</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"My Button"</span>&gt;</span><span class="tag">&lt;/<span class="name">q-btn</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Quasar-Directives"><a href="#Quasar-Directives" class="headerlink" title="Quasar Directives"></a>Quasar Directives</h3><p>An example. No need to install any directives in UMD version.<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-ripple</span>&gt;</span>...<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="Quasar-Plugins"><a href="#Quasar-Plugins" class="headerlink" title="Quasar Plugins"></a>Quasar Plugins</h3><p>An example. No need to install any plugins in UMD version.</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.plugins.actionSheet.create(&#123;...&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="Quasar-Utils"><a href="#Quasar-Utils" class="headerlink" title="Quasar Utils"></a>Quasar Utils</h3><p>An example.</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.utils.event.getEventKey(evt)</span><br></pre></td></tr></table></figure>
+<h3 id="Changing-Quasar-Icon-Set"><a href="#Changing-Quasar-Icon-Set" class="headerlink" title="Changing Quasar Icon Set"></a>Changing Quasar Icon Set</h3><p>Assuming you have already included the CDN link to your favorite Quasar Icon Set (unless you’re using Material Icons which is used by default), you can then tell Quasar to use it:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Quasar.icons.set(Quasar.icons.fontawesome)</span><br></pre></td></tr></table></figure>
+<h3 id="Changing-Quasar-I18n-Language"><a href="#Changing-Quasar-I18n-Language" class="headerlink" title="Changing Quasar I18n Language"></a>Changing Quasar I18n Language</h3><p>Assuming you have already included the CDN link to your desired Quasar I18n Language (unless you want “en-us” language pack which is used by default), you can then tell Quasar to use it:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// example setting German language,</span></span><br><span class="line"><span class="comment">// using ISO 2 letter code:</span></span><br><span class="line">Quasar.i18n.set(Quasar.i18n.de)</span><br><span class="line"></span><br><span class="line"><span class="comment">// example setting Portuguese (Brazil) language:</span></span><br><span class="line">Quasar.i18n.set(Quasar.i18n.ptBr)</span><br></pre></td></tr></table></figure>
+<p>The list of available languages can be found on <a href="https://github.com/quasarframework/quasar/tree/dev/i18n" target="_blank" rel="noopener">Github</a>. <strong>If your desired language pack is not available yet, you can help by providing a PR. We welcome any languages!</strong></p>
 ]]></content>
     </entry>
     
@@ -2059,24 +2059,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[Deploying SSR]]></title>
-      <url>https://quasar-framework.org/guide/ssr-deploying.html</url>
-      <content type="html"><![CDATA[<p>When deploying as a SPA or PWA, the distributables folder that gets generated by Quasar CLI can be served by a static webserver. However, this not the case with a SSR (Server-side Render) build. Your distributables, in this case, contain your production webserver too – which can be tweaked from <code>/src-ssr</code>.</p>
-<p>By default, the SSR distributables use <a href="https://expressjs.com/" target="_blank" rel="noopener">Express</a>, but you can replace it with your webserver of choice.</p>
-<h2 id="The-Distributables-Folder"><a href="#The-Distributables-Folder" class="headerlink" title="The Distributables Folder"></a>The Distributables Folder</h2><p>After building your app on SSR mode (<code>$ quasar build -m ssr</code>) the folder that gets generated contains a standalone webserver tweaked for serving with SSR.</p>
-<p>You’ll notice that it contains a <code>package.json</code> file of its own. It has an npm script defined, called “start”:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">  <span class="string">"start"</span>: <span class="string">"node index.js"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>So what you need to do when deploying is to copy this distributables folder on your server, yarn/npm install the dependencies inside it, then run <code>$ yarn start</code> or <code>$ npm run start</code>. This boots up the webserver and starts listening for connections.</p>
-<h2 id="Enhancing-Performance"><a href="#Enhancing-Performance" class="headerlink" title="Enhancing Performance"></a>Enhancing Performance</h2><p>By default, the webserver runs on only one of the available server’s cores. What you could do is make it use all cores. There is a solution for this: <a href="http://pm2.keymetrics.io/" target="_blank" rel="noopener">PM2</a>.</p>
-<p>After installing PM2 on your server, your npm start script can look like this instead:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">  <span class="string">"start"</span>: <span class="string">"pm2 start index.js"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Deploying-with-Now-sh"><a href="#Deploying-with-Now-sh" class="headerlink" title="Deploying with Now.sh"></a>Deploying with Now.sh</h2><p>Deploying with <a href="https://zeit.co/now" target="_blank" rel="noopener">Now</a> is a breeze. All you need to do is to follow their <a href="https://zeit.co/now#get-started" target="_blank" rel="noopener">installation instructions</a>. They recommend downloading “Now Desktop” but you can skip that and directly install the Now CLI:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g now</span><br><span class="line">$ now login</span><br></pre></td></tr></table></figure>
-<p>Then, you cd into the distributables folder and run <code>$ now</code>. You might want to use a “now alias” or connect your domain to Now. And you’re done!</p>
-<p><code>Now.sh</code> will npm install the dependencies automatically then run <code>$ npm run start</code>. Your website will be up and running on an HTTPS connection in a matter of seconds!</p>
-]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[Configuring SSR]]></title>
       <url>https://quasar-framework.org/guide/ssr-configuring-ssr.html</url>
       <content type="html"><![CDATA[<p>We’ll be using Quasar CLI to develop and build a SSR website. The difference between building a SPA, Mobile App, Electron App, PWA or SSR is simply determined by the “mode” parameter in “quasar dev” and “quasar build” commands.</p>
@@ -2129,6 +2111,24 @@
 <p>There is a good reason for this. In a client-only app, every user will be using a fresh instance of the app in their browser. For server-side rendering we want the same thing. Each request should have a fresh, isolated app instance so that there is no cross-request state pollution. So Platform and Cookies need to be bound to each request separately.</p>
 <p>Also a good idea is to read the <a href="/guide/ssr-writing-universal-code.html">Writing Universal Code</a> documentation page.</p>
 <h2 id="Why-isn’t-LocalStorage-and-SessionStorage-working"><a href="#Why-isn’t-LocalStorage-and-SessionStorage-working" class="headerlink" title="Why isn’t LocalStorage and SessionStorage working?"></a>Why isn’t LocalStorage and SessionStorage working?</h2><p>When running the code on server-side, the storage facilities can’t work. Web Storage is a browser only API.</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Deploying SSR]]></title>
+      <url>https://quasar-framework.org/guide/ssr-deploying.html</url>
+      <content type="html"><![CDATA[<p>When deploying as a SPA or PWA, the distributables folder that gets generated by Quasar CLI can be served by a static webserver. However, this not the case with a SSR (Server-side Render) build. Your distributables, in this case, contain your production webserver too – which can be tweaked from <code>/src-ssr</code>.</p>
+<p>By default, the SSR distributables use <a href="https://expressjs.com/" target="_blank" rel="noopener">Express</a>, but you can replace it with your webserver of choice.</p>
+<h2 id="The-Distributables-Folder"><a href="#The-Distributables-Folder" class="headerlink" title="The Distributables Folder"></a>The Distributables Folder</h2><p>After building your app on SSR mode (<code>$ quasar build -m ssr</code>) the folder that gets generated contains a standalone webserver tweaked for serving with SSR.</p>
+<p>You’ll notice that it contains a <code>package.json</code> file of its own. It has an npm script defined, called “start”:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">  <span class="string">"start"</span>: <span class="string">"node index.js"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>So what you need to do when deploying is to copy this distributables folder on your server, yarn/npm install the dependencies inside it, then run <code>$ yarn start</code> or <code>$ npm run start</code>. This boots up the webserver and starts listening for connections.</p>
+<h2 id="Enhancing-Performance"><a href="#Enhancing-Performance" class="headerlink" title="Enhancing Performance"></a>Enhancing Performance</h2><p>By default, the webserver runs on only one of the available server’s cores. What you could do is make it use all cores. There is a solution for this: <a href="http://pm2.keymetrics.io/" target="_blank" rel="noopener">PM2</a>.</p>
+<p>After installing PM2 on your server, your npm start script can look like this instead:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">  <span class="string">"start"</span>: <span class="string">"pm2 start index.js"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Deploying-with-Now-sh"><a href="#Deploying-with-Now-sh" class="headerlink" title="Deploying with Now.sh"></a>Deploying with Now.sh</h2><p>Deploying with <a href="https://zeit.co/now" target="_blank" rel="noopener">Now</a> is a breeze. All you need to do is to follow their <a href="https://zeit.co/now#get-started" target="_blank" rel="noopener">installation instructions</a>. They recommend downloading “Now Desktop” but you can skip that and directly install the Now CLI:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g now</span><br><span class="line">$ now login</span><br></pre></td></tr></table></figure>
+<p>Then, you cd into the distributables folder and run <code>$ now</code>. You might want to use a “now alias” or connect your domain to Now. And you’re done!</p>
+<p><code>Now.sh</code> will npm install the dependencies automatically then run <code>$ npm run start</code>. Your website will be up and running on an HTTPS connection in a matter of seconds!</p>
 ]]></content>
     </entry>
     
@@ -2223,6 +2223,24 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Mobile Addressbar Coloring]]></title>
+      <url>https://quasar-framework.org/components/addressbar-color.html</url>
+      <content type="html"><![CDATA[<p>Newer mobile browsers have the ability to specify a color for the addressbar, like in the example below.</p>
+<blockquote>
+<p><strong>Note 1.</strong> There isn’t yet a Web standard for this so it won’t work for all mobile browsers.<br><strong>Note 2.</strong> This applies when building a website only. For coloring top bar on a mobile app (built with Cordova wrapper), please refer to <a href="https://cordova.apache.org/plugins/" target="_blank" rel="noopener">Cordova plugins</a>.</p>
+</blockquote>
+<p><img src="/images/mobile-address-bar-colors.jpg" alt="Mobile Addressbar Coloring" title="Mobile Addressbar Coloring"></p>
+<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>First, we need to indicate that we want the AddressbarColor Quasar plugin embedded into our website/app:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// file: /quasar.conf.js</span></span><br><span class="line">framework: &#123;</span><br><span class="line">  plugins: [<span class="string">'AddressbarColor'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Then we create an app plugin to initialize its usage: <code>quasar new plugin addressbar-color</code>. A file is created (<code>/src/plugins/addressbar-color.js</code>). We edit it:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; AddressbarColor &#125; <span class="keyword">from</span> <span class="string">'quasar'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; &#123;</span><br><span class="line">  AddressbarColor.set(<span class="string">'#a2e3fa'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>What this does is that it injects some <code>&lt;meta&gt;</code> tags into your <code>index.html</code> at runtime. This means, as an example, that you can dynamically change this color during runtime multiple times, based on the page the user is on (by calling <code>set</code> method on <code>created()</code> lifecycle hook on the respective pages):</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// a .vue file representing a page</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="comment">// ...,</span></span><br><span class="line">  created () &#123;</span><br><span class="line">    <span class="keyword">this</span>.$q.addressbarColor.set(<span class="string">'#a2e3fa'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Calling <code>set()</code> with no parameters will use the primary color.</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Action Sheet]]></title>
       <url>https://quasar-framework.org/components/action-sheet.html</url>
       <content type="html"><![CDATA[<p>Action Sheets slide up from the bottom edge of the device screen, and display a set of options with the ability to confirm or cancel an action. Action Sheets can sometimes be used as an alternative to menus, however, they should not be used for navigation.</p>
@@ -2308,24 +2326,6 @@
 </tr>
 </tbody>
 </table>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Mobile Addressbar Coloring]]></title>
-      <url>https://quasar-framework.org/components/addressbar-color.html</url>
-      <content type="html"><![CDATA[<p>Newer mobile browsers have the ability to specify a color for the addressbar, like in the example below.</p>
-<blockquote>
-<p><strong>Note 1.</strong> There isn’t yet a Web standard for this so it won’t work for all mobile browsers.<br><strong>Note 2.</strong> This applies when building a website only. For coloring top bar on a mobile app (built with Cordova wrapper), please refer to <a href="https://cordova.apache.org/plugins/" target="_blank" rel="noopener">Cordova plugins</a>.</p>
-</blockquote>
-<p><img src="/images/mobile-address-bar-colors.jpg" alt="Mobile Addressbar Coloring" title="Mobile Addressbar Coloring"></p>
-<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>First, we need to indicate that we want the AddressbarColor Quasar plugin embedded into our website/app:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// file: /quasar.conf.js</span></span><br><span class="line">framework: &#123;</span><br><span class="line">  plugins: [<span class="string">'AddressbarColor'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Then we create an app plugin to initialize its usage: <code>quasar new plugin addressbar-color</code>. A file is created (<code>/src/plugins/addressbar-color.js</code>). We edit it:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; AddressbarColor &#125; <span class="keyword">from</span> <span class="string">'quasar'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; &#123;</span><br><span class="line">  AddressbarColor.set(<span class="string">'#a2e3fa'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>What this does is that it injects some <code>&lt;meta&gt;</code> tags into your <code>index.html</code> at runtime. This means, as an example, that you can dynamically change this color during runtime multiple times, based on the page the user is on (by calling <code>set</code> method on <code>created()</code> lifecycle hook on the respective pages):</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// a .vue file representing a page</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="comment">// ...,</span></span><br><span class="line">  created () &#123;</span><br><span class="line">    <span class="keyword">this</span>.$q.addressbarColor.set(<span class="string">'#a2e3fa'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Calling <code>set()</code> with no parameters will use the primary color.</p>
 ]]></content>
     </entry>
     
@@ -2431,6 +2431,51 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Animation CSS Helper Classes]]></title>
+      <url>https://quasar-framework.org/components/animation-css-helper-classes.html</url>
+      <content type="html"><![CDATA[<p>Add these CSS classes to the DOM element / component you want the effect on.<br>These are very basic effects so for advanced ones check <a href="/components/transition.html">Transition</a>, <a href="/components/slide-transition.html">Slide Transition</a> or use <a href="/components/js-animations.html">JS Animations</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Class Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>animate-pop</code></td>
+<td>Apply a pop-in effect to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-scale</code></td>
+<td>Apply a scale-in effect to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-fade</code></td>
+<td>Apply a fade-in effect to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-spin</code></td>
+<td>Apply a continuous spin/rotation to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-spin-reverse</code></td>
+<td>Apply a continuous spin/rotation (opposite direction to <code>animate-spin</code>) to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-blink</code></td>
+<td>Apply a continuous blinking effect to the DOM element</td>
+</tr>
+<tr>
+<td><code>animate-bounce</code></td>
+<td>Apply a continuous bouncing effect to the DOM element</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Alert]]></title>
       <url>https://quasar-framework.org/components/alert.html</url>
       <content type="html"><![CDATA[<p>QAlert is a component that allows you to display an informational message to the users, with optional action buttons.</p>
@@ -2488,51 +2533,6 @@
 <td><code>actions</code></td>
 <td>Array of Objects</td>
 <td>Place one or more buttons within the alert, like “Snooze” or “Abort”. Each Object from Array must have <code>label</code> (String) and <code>handler</code> (Function) props.</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Animation CSS Helper Classes]]></title>
-      <url>https://quasar-framework.org/components/animation-css-helper-classes.html</url>
-      <content type="html"><![CDATA[<p>Add these CSS classes to the DOM element / component you want the effect on.<br>These are very basic effects so for advanced ones check <a href="/components/transition.html">Transition</a>, <a href="/components/slide-transition.html">Slide Transition</a> or use <a href="/components/js-animations.html">JS Animations</a>.</p>
-<table>
-<thead>
-<tr>
-<th>Class Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>animate-pop</code></td>
-<td>Apply a pop-in effect to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-scale</code></td>
-<td>Apply a scale-in effect to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-fade</code></td>
-<td>Apply a fade-in effect to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-spin</code></td>
-<td>Apply a continuous spin/rotation to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-spin-reverse</code></td>
-<td>Apply a continuous spin/rotation (opposite direction to <code>animate-spin</code>) to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-blink</code></td>
-<td>Apply a continuous blinking effect to the DOM element</td>
-</tr>
-<tr>
-<td><code>animate-bounce</code></td>
-<td>Apply a continuous bouncing effect to the DOM element</td>
 </tr>
 </tbody>
 </table>
@@ -3237,6 +3237,56 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Button Group]]></title>
+      <url>https://quasar-framework.org/components/button-group.html</url>
+      <content type="html"><![CDATA[<p>You can conveniently group <a href="/components/button.html">QBtn</a> and <a href="/components/button-dropdown.html">QBtnDropdown</a> using QBtnGroup. Be sure to check those component’s respective pages to see their props and methods.</p>
+<input type="hidden" data-fullpage-demo="buttons/btn-group">
+
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [</span><br><span class="line">    <span class="string">'QBtnGroup'</span>,</span><br><span class="line">    <span class="string">'QBtn'</span>,        <span class="comment">// if using QBtn</span></span><br><span class="line">    <span class="string">'QBtnDropdown'</span> <span class="comment">// if using QBtnDropdown</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Basic-usage"><a href="#Basic-usage" class="headerlink" title="Basic usage"></a>Basic usage</h2><p>Simple group of three buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Simple group of three push buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">push</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Simple group of three outlined buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">outline</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><table>
+<thead>
+<tr>
+<th>Vue Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>outline</code></td>
+<td>Boolean</td>
+<td>Set true, if you want an outlined button.</td>
+</tr>
+<tr>
+<td><code>flat</code></td>
+<td>Boolean</td>
+<td>Set true, if you want a flat button.</td>
+</tr>
+<tr>
+<td><code>push</code></td>
+<td>Boolean</td>
+<td>Set true, if the button should have a push effect.</td>
+</tr>
+<tr>
+<td><code>rounded</code></td>
+<td>Boolean</td>
+<td>Set true, if the square button should have rounded corners.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>You must use these props on both the parent QBtnGroup and the children QBtn/QBtnDropdown.</p>
+</blockquote>
+<h2 id="More-examples"><a href="#More-examples" class="headerlink" title="More examples"></a>More examples</h2><p>Simple group of three rounded buttons<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">rounded</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Simple group of three flat buttons<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">flat</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Simple group of two rounded buttons and one rounded dropdown button:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">rounded</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"One"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"Two"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn-dropdown</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"Three"</span> <span class="attr">split</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- dropdown content goes here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-list</span> <span class="attr">link</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item</span> <span class="attr">v-close-overlay</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">icon</span>=<span class="string">"folder"</span> <span class="attr">inverted</span> <span class="attr">color</span>=<span class="string">"primary"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">label</span>&gt;</span>Photos<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">sublabel</span>&gt;</span>February 22, 2016<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">right</span> <span class="attr">icon</span>=<span class="string">"info"</span> <span class="attr">color</span>=<span class="string">"amber"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-item</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item-separator</span> <span class="attr">inset</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-list-header</span> <span class="attr">inset</span>&gt;</span>Files<span class="tag">&lt;/<span class="name">q-list-header</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item</span> <span class="attr">v-close-overlay</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">icon</span>=<span class="string">"assignment"</span> <span class="attr">inverted</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">label</span>&gt;</span>Vacation<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">sublabel</span>&gt;</span>February 22, 2016<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">right</span> <span class="attr">icon</span>=<span class="string">"info"</span> <span class="attr">color</span>=<span class="string">"amber"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">q-btn-dropdown</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Button Toggle]]></title>
       <url>https://quasar-framework.org/components/button-toggle.html</url>
       <content type="html"><![CDATA[<p>The QBtnToggle component is another basic element for user input, similar to QRadio but with buttons. You can use this to supply a way for the user to pick an option from multiple choices.</p>
@@ -3374,56 +3424,6 @@
 </tr>
 </tbody>
 </table>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Button Group]]></title>
-      <url>https://quasar-framework.org/components/button-group.html</url>
-      <content type="html"><![CDATA[<p>You can conveniently group <a href="/components/button.html">QBtn</a> and <a href="/components/button-dropdown.html">QBtnDropdown</a> using QBtnGroup. Be sure to check those component’s respective pages to see their props and methods.</p>
-<input type="hidden" data-fullpage-demo="buttons/btn-group">
-
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [</span><br><span class="line">    <span class="string">'QBtnGroup'</span>,</span><br><span class="line">    <span class="string">'QBtn'</span>,        <span class="comment">// if using QBtn</span></span><br><span class="line">    <span class="string">'QBtnDropdown'</span> <span class="comment">// if using QBtnDropdown</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Basic-usage"><a href="#Basic-usage" class="headerlink" title="Basic usage"></a>Basic usage</h2><p>Simple group of three buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Simple group of three push buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">push</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">push</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Simple group of three outlined buttons:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">outline</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">outline</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><table>
-<thead>
-<tr>
-<th>Vue Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>outline</code></td>
-<td>Boolean</td>
-<td>Set true, if you want an outlined button.</td>
-</tr>
-<tr>
-<td><code>flat</code></td>
-<td>Boolean</td>
-<td>Set true, if you want a flat button.</td>
-</tr>
-<tr>
-<td><code>push</code></td>
-<td>Boolean</td>
-<td>Set true, if the button should have a push effect.</td>
-</tr>
-<tr>
-<td><code>rounded</code></td>
-<td>Boolean</td>
-<td>Set true, if the square button should have rounded corners.</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>You must use these props on both the parent QBtnGroup and the children QBtn/QBtnDropdown.</p>
-</blockquote>
-<h2 id="More-examples"><a href="#More-examples" class="headerlink" title="More examples"></a>More examples</h2><p>Simple group of three rounded buttons<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">rounded</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Simple group of three flat buttons<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">flat</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"One"</span> @<span class="attr">click</span>=<span class="string">"clickHandler1"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"Two"</span> @<span class="attr">click</span>=<span class="string">"clickHandler2"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">flat</span> <span class="attr">label</span>=<span class="string">"Three"</span> @<span class="attr">click</span>=<span class="string">"clickHandler3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Simple group of two rounded buttons and one rounded dropdown button:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-btn-group</span> <span class="attr">rounded</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"One"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"Two"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-btn-dropdown</span> <span class="attr">rounded</span> <span class="attr">color</span>=<span class="string">"primary"</span> <span class="attr">label</span>=<span class="string">"Three"</span> <span class="attr">split</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- dropdown content goes here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-list</span> <span class="attr">link</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item</span> <span class="attr">v-close-overlay</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">icon</span>=<span class="string">"folder"</span> <span class="attr">inverted</span> <span class="attr">color</span>=<span class="string">"primary"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">label</span>&gt;</span>Photos<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">sublabel</span>&gt;</span>February 22, 2016<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">right</span> <span class="attr">icon</span>=<span class="string">"info"</span> <span class="attr">color</span>=<span class="string">"amber"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-item</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item-separator</span> <span class="attr">inset</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-list-header</span> <span class="attr">inset</span>&gt;</span>Files<span class="tag">&lt;/<span class="name">q-list-header</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">q-item</span> <span class="attr">v-close-overlay</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">icon</span>=<span class="string">"assignment"</span> <span class="attr">inverted</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">label</span>&gt;</span>Vacation<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-item-tile</span> <span class="attr">sublabel</span>&gt;</span>February 22, 2016<span class="tag">&lt;/<span class="name">q-item-tile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-item-main</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-item-side</span> <span class="attr">right</span> <span class="attr">icon</span>=<span class="string">"info"</span> <span class="attr">color</span>=<span class="string">"amber"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">q-btn-dropdown</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-btn-group</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 ]]></content>
     </entry>
     
@@ -5754,7 +5754,7 @@
 <blockquote>
 <p><strong>IMPORTANT</strong><br>Initial sorted column, sorting direction &amp; page is configured through the <code>pagination</code> prop. Check the Pagination section below.</p>
 </blockquote>
-<h3 id="Defining-the-Columns"><a href="#Defining-the-Columns" class="headerlink" title="Defining the Columns"></a>Defining the Columns</h3><p>Let’s take an example of configuring the <code>columns</code> property. Let’s assume we are telling QTable that row-key is ‘name’.<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">columns: <span class="comment">/* array of Objects */</span> [</span><br><span class="line">  <span class="comment">// column Object definition</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// unique id (used by row-key, pagination.sortBy, ...)</span></span><br><span class="line">    name: <span class="string">'desc'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// label for header</span></span><br><span class="line">    label: <span class="string">'Dessert (100g serving)'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// row Object property to determine value for this column</span></span><br><span class="line">    field: <span class="string">'name'</span>,</span><br><span class="line">    <span class="comment">// OR field: row =&gt; row.some.nested.prop</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) if we use visible-columns, this col will always be visible</span></span><br><span class="line">    required: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) alignment</span></span><br><span class="line">    align: <span class="string">'left'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) tell QTable you want this column sortable</span></span><br><span class="line">    sortable: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) compare function if you have</span></span><br><span class="line">    <span class="comment">// some custom data or want a specific way to compare two rows</span></span><br><span class="line">    sort: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>)</span><br><span class="line">    <span class="comment">// function return value:</span></span><br><span class="line">    <span class="comment">//   * is less than 0 then sort a to an index lower than b, i.e. a comes first</span></span><br><span class="line">    <span class="comment">//   * is 0 then leave a and b unchanged with respect to each other, but sorted with respect to all different elements</span></span><br><span class="line">    <span class="comment">//   * is greater than 0 then sort b to an index lower than a, i.e. b comes first</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// v0.17.9+; if using scoped slots, apply this yourself instead</span></span><br><span class="line">    style: <span class="string">'width: 500px'</span>,</span><br><span class="line">    classes: <span class="string">'my-special-class'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'calories'</span>, <span class="attr">label</span>: <span class="string">'Calories'</span>, <span class="attr">field</span>: <span class="string">'calories'</span>, <span class="attr">sortable</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'fat'</span>, <span class="attr">label</span>: <span class="string">'Fat (g)'</span>, <span class="attr">field</span>: <span class="string">'fat'</span>, <span class="attr">sortable</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'carbs'</span>, <span class="attr">label</span>: <span class="string">'Carbs (g)'</span>, <span class="attr">field</span>: <span class="string">'carbs'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'protein'</span>, <span class="attr">label</span>: <span class="string">'Protein (g)'</span>, <span class="attr">field</span>: <span class="string">'protein'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'sodium'</span>, <span class="attr">label</span>: <span class="string">'Sodium (mg)'</span>, <span class="attr">field</span>: <span class="string">'sodium'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'calcium'</span>, <span class="attr">label</span>: <span class="string">'Calcium (%)'</span>, <span class="attr">field</span>: <span class="string">'calcium'</span>, <span class="attr">sortable</span>: <span class="literal">true</span>, <span class="attr">sort</span>: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>) &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'iron'</span>, <span class="attr">label</span>: <span class="string">'Iron (%)'</span>, <span class="attr">field</span>: <span class="string">'iron'</span>, <span class="attr">sortable</span>: <span class="literal">true</span>, <span class="attr">sort</span>: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>) &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<h3 id="Defining-the-Columns"><a href="#Defining-the-Columns" class="headerlink" title="Defining the Columns"></a>Defining the Columns</h3><p>Let’s take an example of configuring the <code>columns</code> property. Let’s assume we are telling QTable that row-key is ‘name’.<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">columns: <span class="comment">/* array of Objects */</span> [</span><br><span class="line">  <span class="comment">// column Object definition</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// unique id (used by row-key, pagination.sortBy, ...)</span></span><br><span class="line">    name: <span class="string">'desc'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// label for header</span></span><br><span class="line">    label: <span class="string">'Dessert (100g serving)'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// row Object property to determine value for this column</span></span><br><span class="line">    field: <span class="string">'name'</span>,</span><br><span class="line">    <span class="comment">// OR field: row =&gt; row.some.nested.prop</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) if we use visible-columns, this col will always be visible</span></span><br><span class="line">    required: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) alignment</span></span><br><span class="line">    align: <span class="string">'left'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) tell QTable you want this column sortable</span></span><br><span class="line">    sortable: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) compare function if you have</span></span><br><span class="line">    <span class="comment">// some custom data or want a specific way to compare two rows</span></span><br><span class="line">    sort: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>)</span><br><span class="line">    <span class="comment">// function return value:</span></span><br><span class="line">    <span class="comment">//   * is less than 0 then sort a to an index lower than b, i.e. a comes first</span></span><br><span class="line">    <span class="comment">//   * is 0 then leave a and b unchanged with respect to each other, but sorted with respect to all different elements</span></span><br><span class="line">    <span class="comment">//   * is greater than 0 then sort b to an index lower than a, i.e. b comes first</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// (optional) you can format the data with a function</span></span><br><span class="line">    format: <span class="function"><span class="params">val</span> =&gt;</span> <span class="string">`<span class="subst">$&#123;val&#125;</span>%`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// v0.17.9+; if using scoped slots, apply this yourself instead</span></span><br><span class="line">    style: <span class="string">'width: 500px'</span>,</span><br><span class="line">    classes: <span class="string">'my-special-class'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'calories'</span>, <span class="attr">label</span>: <span class="string">'Calories'</span>, <span class="attr">field</span>: <span class="string">'calories'</span>, <span class="attr">sortable</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'fat'</span>, <span class="attr">label</span>: <span class="string">'Fat (g)'</span>, <span class="attr">field</span>: <span class="string">'fat'</span>, <span class="attr">sortable</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'carbs'</span>, <span class="attr">label</span>: <span class="string">'Carbs (g)'</span>, <span class="attr">field</span>: <span class="string">'carbs'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'protein'</span>, <span class="attr">label</span>: <span class="string">'Protein (g)'</span>, <span class="attr">field</span>: <span class="string">'protein'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'sodium'</span>, <span class="attr">label</span>: <span class="string">'Sodium (mg)'</span>, <span class="attr">field</span>: <span class="string">'sodium'</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'calcium'</span>, <span class="attr">label</span>: <span class="string">'Calcium (%)'</span>, <span class="attr">field</span>: <span class="string">'calcium'</span>, <span class="attr">sortable</span>: <span class="literal">true</span>, <span class="attr">sort</span>: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>) &#125;,</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'iron'</span>, <span class="attr">label</span>: <span class="string">'Iron (%)'</span>, <span class="attr">field</span>: <span class="string">'iron'</span>, <span class="attr">sortable</span>: <span class="literal">true</span>, <span class="attr">sort</span>: <span class="function">(<span class="params">a, b</span>) =&gt;</span> <span class="built_in">parseInt</span>(a, <span class="number">10</span>) - <span class="built_in">parseInt</span>(b, <span class="number">10</span>) &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p><strong>IMPORTANT</strong><br>If your data is nested and you need to fill a column with a certain value in the nested objects, you can grab a property value within the nested objects like so: <code>field: obj =&gt; obj.some.nested.prop</code></p>
 </blockquote>
@@ -7580,6 +7580,23 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Overview]]></title>
+      <url>https://quasar-framework.org/components/index.html</url>
+      <content type="html"><![CDATA[<p>Quasar Apps are made of high-level building blocks called components. Components allow you to quickly construct an interface for your App. Quasar comes with a number of components, including modals, action sheets, collapsibles, cards, dialogs, FAB, lists and many more.</p>
+<p>Quasar Components are written as Web Components, so they embed HTML, CSS and Javascript code that you can use by just including an HTML tag in your Page and Layout templates.</p>
+<blockquote>
+<p><strong>IMPORTANT</strong><br>For Vue &amp; Quasar developers (beginners or not), read <a href="/components/introduction-for-beginners.html">Introduction for Beginners</a> first. It’s mandatory in order to understand how you can use Vue properties, methods and so on.</p>
+</blockquote>
+<p>Check out the live demos for each Quasar theme to see what each component looks like and to learn how to use each one. If you widen your browser window enough then you’ll see a live demo on the right side of each component page.</p>
+<p>Live Component Demo:</p>
+<ul>
+<li><a href="http://quasar-framework.org/quasar-play/android/index.html#/showcase">Material Theme</a></li>
+<li><a href="http://quasar-framework.org/quasar-play/apple/index.html#/showcase">iOS Theme</a></li>
+</ul>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Icons]]></title>
       <url>https://quasar-framework.org/components/icons.html</url>
       <content type="html"><![CDATA[<p>The Quasar Icon component allows you to easily insert icons within other components or any other area of your pages, as you’d like.<br>Quasar currently supports: <a href="https://material.io/icons/" target="_blank" rel="noopener">Material Icons</a> , <a href="http://fontawesome.io/icons/" target="_blank" rel="noopener">Font Awesome</a>, <a href="http://ionicons.com/" target="_blank" rel="noopener">Ionicons</a>, <a href="https://materialdesignicons.com/" target="_blank" rel="noopener">MDI</a> and <a href="https://icomoon.io/" target="_blank" rel="noopener">IcoMoon</a>.</p>
@@ -7709,23 +7726,6 @@
 <p><strong>Note</strong><br>To create the necessary CSS class, you would need to define the class within your component’s style section as below. Watch for CSS class clashes though.</p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">&lt;style lang=<span class="string">"stylus"</span>&gt;</span><br><span class="line">.big-<span class="attribute">icon</span></span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">5rem</span></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
 <p>Adding a <code>click</code> event handle. Remember we want to capture a native DOM event and this is a Vue component, so we use the <a href="https://vuejs.org/v2/guide/components.html#Binding-Native-Events-to-Components" target="_blank" rel="noopener">‘.native’ modifier</a>:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-icon</span></span></span><br><span class="line"><span class="tag">  <span class="attr">name</span>=<span class="string">"map"</span></span></span><br><span class="line"><span class="tag">  @<span class="attr">click.native</span>=<span class="string">"handle"</span></span></span><br><span class="line"><span class="tag">/&gt;</span></span><br></pre></td></tr></table></figure></p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Overview]]></title>
-      <url>https://quasar-framework.org/components/index.html</url>
-      <content type="html"><![CDATA[<p>Quasar Apps are made of high-level building blocks called components. Components allow you to quickly construct an interface for your App. Quasar comes with a number of components, including modals, action sheets, collapsibles, cards, dialogs, FAB, lists and many more.</p>
-<p>Quasar Components are written as Web Components, so they embed HTML, CSS and Javascript code that you can use by just including an HTML tag in your Page and Layout templates.</p>
-<blockquote>
-<p><strong>IMPORTANT</strong><br>For Vue &amp; Quasar developers (beginners or not), read <a href="/components/introduction-for-beginners.html">Introduction for Beginners</a> first. It’s mandatory in order to understand how you can use Vue properties, methods and so on.</p>
-</blockquote>
-<p>Check out the live demos for each Quasar theme to see what each component looks like and to learn how to use each one. If you widen your browser window enough then you’ll see a live demo on the right side of each component page.</p>
-<p>Live Component Demo:</p>
-<ul>
-<li><a href="http://quasar-framework.org/quasar-play/android/index.html#/showcase">Material Theme</a></li>
-<li><a href="http://quasar-framework.org/quasar-play/apple/index.html#/showcase">iOS Theme</a></li>
-</ul>
 ]]></content>
     </entry>
     
@@ -8943,20 +8943,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[LoadingBar]]></title>
-      <url>https://quasar-framework.org/components/loading-bar.html</url>
-      <content type="html"><![CDATA[<p>The Quasar LoadingBar plugin offers an easy way to set up your app with a <a href="/components/ajax-bar.html">QAjaxBar</a> in case you don’t want to handle a QAjaxBar component yourself.</p>
-<p>For a demo, please visit the QAjaxBar documentation page.</p>
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  plugins: [<span class="string">'LoadingBar'</span>],</span><br><span class="line"></span><br><span class="line">  config: &#123;</span><br><span class="line">    <span class="comment">// optional (v0.17+)</span></span><br><span class="line">    loadingBar: &#123;</span><br><span class="line">      <span class="comment">// QAjaxBar properties</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>QAjaxBar properties can be found <a href="/components/ajax-bar.html#Vue-Properties">here</a>.</p>
-<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>Inside Vue components:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">this</span>.$q.loadingBar.start()</span><br><span class="line"><span class="keyword">this</span>.$q.loadingBar.stop()</span><br><span class="line"><span class="keyword">this</span>.$q.loadingBar.increment(value)</span><br></pre></td></tr></table></figure></p>
-<p>Outside of Vue components:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import &#123; LoadingBar &#125; from &apos;quasar&apos;</span><br><span class="line"></span><br><span class="line">LoadingBar.start()</span><br><span class="line">LoadingBar.stop()</span><br><span class="line">LoadingBar.increment(value)</span><br></pre></td></tr></table></figure></p>
-<h2 id="Setting-Up-Defaults"><a href="#Setting-Up-Defaults" class="headerlink" title="Setting Up Defaults"></a>Setting Up Defaults</h2><p><em>Quasar v0.17+</em></p>
-<p>Should you wish to set up some defaults, rather than specifying them each time, you can do so by using quasar.conf &gt; framework &gt; config &gt; loadingBar: {…} or by calling <code>LoadingBar.setDefaults({...})</code> or <code>this.$q.loadingBar.setDefaults({...})</code>.</p>
-]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[Lists and List Items]]></title>
       <url>https://quasar-framework.org/components/lists-and-list-items.html</url>
       <content type="html"><![CDATA[<p>Quasar Lists and List Items are a group of components which can work together to present multiple line items vertically as a single continuous element. They are best suited for displaying similar data types as rows of information, such as a contact list, a playlist, or menu. Each row is called an Item. Items can also be used outside of a List.</p>
@@ -9379,6 +9365,20 @@
     </entry>
     
     <entry>
+      <title><![CDATA[LoadingBar]]></title>
+      <url>https://quasar-framework.org/components/loading-bar.html</url>
+      <content type="html"><![CDATA[<p>The Quasar LoadingBar plugin offers an easy way to set up your app with a <a href="/components/ajax-bar.html">QAjaxBar</a> in case you don’t want to handle a QAjaxBar component yourself.</p>
+<p>For a demo, please visit the QAjaxBar documentation page.</p>
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  plugins: [<span class="string">'LoadingBar'</span>],</span><br><span class="line"></span><br><span class="line">  config: &#123;</span><br><span class="line">    <span class="comment">// optional (v0.17+)</span></span><br><span class="line">    loadingBar: &#123;</span><br><span class="line">      <span class="comment">// QAjaxBar properties</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>QAjaxBar properties can be found <a href="/components/ajax-bar.html#Vue-Properties">here</a>.</p>
+<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>Inside Vue components:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">this</span>.$q.loadingBar.start()</span><br><span class="line"><span class="keyword">this</span>.$q.loadingBar.stop()</span><br><span class="line"><span class="keyword">this</span>.$q.loadingBar.increment(value)</span><br></pre></td></tr></table></figure></p>
+<p>Outside of Vue components:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import &#123; LoadingBar &#125; from &apos;quasar&apos;</span><br><span class="line"></span><br><span class="line">LoadingBar.start()</span><br><span class="line">LoadingBar.stop()</span><br><span class="line">LoadingBar.increment(value)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Setting-Up-Defaults"><a href="#Setting-Up-Defaults" class="headerlink" title="Setting Up Defaults"></a>Setting Up Defaults</h2><p><em>Quasar v0.17+</em></p>
+<p>Should you wish to set up some defaults, rather than specifying them each time, you can do so by using quasar.conf &gt; framework &gt; config &gt; loadingBar: {…} or by calling <code>LoadingBar.setDefaults({...})</code> or <code>this.$q.loadingBar.setDefaults({...})</code>.</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Loading]]></title>
       <url>https://quasar-framework.org/components/loading.html</url>
       <content type="html"><![CDATA[<p>Loading is a feature that you can use to display an overlay with a spinner on top of your App’s content to inform the user that a background operation is taking place. No need to add complex logic within your Pages for global background operations.</p>
@@ -9622,6 +9622,44 @@
 </table>
 <p>Example:</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-modal</span> <span class="attr">.....</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-modal-layout</span></span></span><br><span class="line"><span class="tag">    <span class="attr">header-style</span>=<span class="string">"min-height: 100px"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">content-class</span>=<span class="string">"&#123;'bg-primary': isPrimary, 'some-class': someBoolean&#125;"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">footer-class</span>=<span class="string">"bg-primary some-class"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">footer-style</span>=<span class="string">"&#123;fontSize: '24px', fontWeight: 'bold'&#125;"</span></span></span><br><span class="line"><span class="tag">  &gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">      inject header and/or footer slots here</span></span><br><span class="line"><span class="comment">      examples:</span></span><br><span class="line"><span class="comment">          1. &lt;div slot="header"&gt;...&lt;/div&gt;</span></span><br><span class="line"><span class="comment">          2. &lt;q-toolbar slot="header"&gt;...&lt;/q-toolbar&gt;</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">      all other elements not using header or footer slot</span></span><br><span class="line"><span class="comment">      is considered content</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    ....</span><br><span class="line">  <span class="tag">&lt;/<span class="name">q-modal-layout</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-modal</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[QNoSsr]]></title>
+      <url>https://quasar-framework.org/components/no-ssr.html</url>
+      <content type="html"><![CDATA[<p>This component makes sense only if you are creating a SSR website/app.</p>
+<p>It avoids rendering its content on the server and leaves that for client only. Useful when you got code that is not isomorphic and can only run on the client side, in a browser.</p>
+<p>Alternatively, you can also use it to render content only on server-side and it automatically removes it if it ends up running on a client browser.</p>
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [<span class="string">'QNoSsr'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><p>Basic:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Multiple client nodes:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't either.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Multiple client nodes with tag prop:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span> <span class="attr">tag</span>=<span class="string">"blockquote"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't either.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Placeholder property:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span> <span class="attr">placeholder</span>=<span class="string">"Rendered on server"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Multiple placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server (1/2)<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server (2/2)<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Only placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><table>
+<thead>
+<tr>
+<th>Vue Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tag</code></td>
+<td>String</td>
+<td>HTML tag to use to render the component. Default: ‘div’</td>
+</tr>
+<tr>
+<td><code>placeholder</code></td>
+<td>String</td>
+<td>String to display on server, before the client takeover.</td>
+</tr>
+</tbody>
+</table>
 ]]></content>
     </entry>
     
@@ -10096,44 +10134,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[QNoSsr]]></title>
-      <url>https://quasar-framework.org/components/no-ssr.html</url>
-      <content type="html"><![CDATA[<p>This component makes sense only if you are creating a SSR website/app.</p>
-<p>It avoids rendering its content on the server and leaves that for client only. Useful when you got code that is not isomorphic and can only run on the client side, in a browser.</p>
-<p>Alternatively, you can also use it to render content only on server-side and it automatically removes it if it ends up running on a client browser.</p>
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [<span class="string">'QNoSsr'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><p>Basic:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Multiple client nodes:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't either.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Multiple client nodes with tag prop:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span> <span class="attr">tag</span>=<span class="string">"blockquote"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't either.<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Placeholder property:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span> <span class="attr">placeholder</span>=<span class="string">"Rendered on server"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Multiple placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>This won't be rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server (1/2)<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server (2/2)<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Only placeholder slot:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-no-ssr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">slot</span>=<span class="string">"placeholder"</span>&gt;</span>Rendered on server<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-no-ssr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><table>
-<thead>
-<tr>
-<th>Vue Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tag</code></td>
-<td>String</td>
-<td>HTML tag to use to render the component. Default: ‘div’</td>
-</tr>
-<tr>
-<td><code>placeholder</code></td>
-<td>String</td>
-<td>String to display on server, before the client takeover.</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[Parallax]]></title>
       <url>https://quasar-framework.org/components/parallax.html</url>
       <content type="html"><![CDATA[<p>Parallax scrolling is a technique in computer graphics and web design, where background images move by the camera slower than foreground images, creating an illusion of depth in a 2D scene and adding to the immersion.</p>
@@ -10394,6 +10394,97 @@
     </entry>
     
     <entry>
+      <title><![CDATA[Popup Edit]]></title>
+      <url>https://quasar-framework.org/components/popup-edit.html</url>
+      <content type="html"><![CDATA[<p>QPopupEdit is a component that can be used to edit a value “in place”, like for example a cell in a QTable. By default, a cell is displayed as a String, then if you are using QPopupEdit and user clicks/taps on the table cell, a popup will open where user will be able to edit the value using a textfield.</p>
+<p>This component injects a QPopover into its parent DOM element and enables the behavior described above, so it can be used anywhere, not only in QTable.</p>
+<input type="hidden" data-fullpage-demo="popups/popup-edit">
+
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p><em>Quasar v0.17.10+</em></p>
+<p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [<span class="string">'QPopupEdit'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>Below is an example with a QTable. Please note that we are using the “body” scoped slot. <strong>QPopupEdit won’t work with cell scoped slots.</strong><br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-table</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:data</span>=<span class="string">"data"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:columns</span>=<span class="string">"columns"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:filter</span>=<span class="string">"filter"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:title</span>=<span class="string">"title"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">row-key</span>=<span class="string">"name"</span></span></span><br><span class="line"><span class="tag">&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-tr</span> <span class="attr">slot</span>=<span class="string">"body"</span> <span class="attr">slot-scope</span>=<span class="string">"props"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"desc"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">      &#123;&#123; props.row.name &#125;&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">q-popup-edit</span> <span class="attr">v-model</span>=<span class="string">"props.row.name"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-field</span> <span class="attr">count</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-input</span> <span class="attr">v-model</span>=<span class="string">"props.row.name"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-popup-edit</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"calories"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">      &#123;&#123; props.row.calories &#125;&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">q-popup-edit</span> <span class="attr">v-model</span>=<span class="string">"props.row.calories"</span> <span class="attr">title</span>=<span class="string">"Update calories"</span> <span class="attr">buttons</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-input</span> <span class="attr">type</span>=<span class="string">"number"</span> <span class="attr">v-model</span>=<span class="string">"props.row.calories"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-popup-edit</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"fat"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.fat &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"carbs"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.carbs &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"protein"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.protein &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"sodium"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.sodium &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"calcium"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.calcium &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"iron"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.iron &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">q-tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-table</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><p>Supports <code>v-model</code> which should be bound to a String or Number (depending on <code>type</code> property used) in your scope.</p>
+<table>
+<thead>
+<tr>
+<th>Vue Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>String</td>
+<td>(Optional) Title to display</td>
+</tr>
+<tr>
+<td><code>buttons</code></td>
+<td>Boolean</td>
+<td>(Optional) Show Set &amp; Cancel buttons</td>
+</tr>
+<tr>
+<td><code>label-set</code></td>
+<td>String</td>
+<td>Override label for “Set” button</td>
+</tr>
+<tr>
+<td><code>label-cancel</code></td>
+<td>String</td>
+<td>Override label for “Cancel” button</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>String</td>
+<td>One from <a href="/components/color-palette.html">Quasar Color Palette</a> to apply for inner input and buttons</td>
+</tr>
+<tr>
+<td><code>validate(val)</code></td>
+<td>Function</td>
+<td>Function to determine if input is correct, and in such case the value is saved, otherwise the edit is cancelled</td>
+</tr>
+<tr>
+<td><code>persistent</code></td>
+<td>Boolean</td>
+<td>Do not close popup if clicking outside of it</td>
+</tr>
+<tr>
+<td><code>disable</code></td>
+<td>Boolean</td>
+<td>Disable popup</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Vue-Events"><a href="#Vue-Events" class="headerlink" title="Vue Events"></a>Vue Events</h2><table>
+<thead>
+<tr>
+<th>Vue Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@show</code></td>
+<td>Triggered after opening popup.</td>
+</tr>
+<tr>
+<td><code>@hide</code></td>
+<td>Triggered after closing popup.</td>
+</tr>
+<tr>
+<td><code>@save(val, initialValue)</code></td>
+<td>Edit is successful and the value gets saved</td>
+</tr>
+<tr>
+<td><code>@cancel(val, initialValue)</code></td>
+<td>Edit has been cancelled and the value gets reverted to its original form</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[CSS Positioning Classes]]></title>
       <url>https://quasar-framework.org/components/positioning.html</url>
       <content type="html"><![CDATA[<p>There are CSS classes supplied by Quasar to help you position a DOM element easily:</p>
@@ -10509,97 +10600,6 @@
 <tr>
 <td><code>vertical-bottom</code></td>
 <td>Set CSS vertical alignment to <code>bottom</code></td>
-</tr>
-</tbody>
-</table>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Popup Edit]]></title>
-      <url>https://quasar-framework.org/components/popup-edit.html</url>
-      <content type="html"><![CDATA[<p>QPopupEdit is a component that can be used to edit a value “in place”, like for example a cell in a QTable. By default, a cell is displayed as a String, then if you are using QPopupEdit and user clicks/taps on the table cell, a popup will open where user will be able to edit the value using a textfield.</p>
-<p>This component injects a QPopover into its parent DOM element and enables the behavior described above, so it can be used anywhere, not only in QTable.</p>
-<input type="hidden" data-fullpage-demo="popups/popup-edit">
-
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p><em>Quasar v0.17.10+</em></p>
-<p>Edit <code>/quasar.conf.js</code>:<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">framework: &#123;</span><br><span class="line">  components: [<span class="string">'QPopupEdit'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><p>Below is an example with a QTable. Please note that we are using the “body” scoped slot. <strong>QPopupEdit won’t work with cell scoped slots.</strong><br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">q-table</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:data</span>=<span class="string">"data"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:columns</span>=<span class="string">"columns"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:filter</span>=<span class="string">"filter"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">:title</span>=<span class="string">"title"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">row-key</span>=<span class="string">"name"</span></span></span><br><span class="line"><span class="tag">&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">q-tr</span> <span class="attr">slot</span>=<span class="string">"body"</span> <span class="attr">slot-scope</span>=<span class="string">"props"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"desc"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">      &#123;&#123; props.row.name &#125;&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">q-popup-edit</span> <span class="attr">v-model</span>=<span class="string">"props.row.name"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-field</span> <span class="attr">count</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">q-input</span> <span class="attr">v-model</span>=<span class="string">"props.row.name"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">q-field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-popup-edit</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"calories"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span></span><br><span class="line">      &#123;&#123; props.row.calories &#125;&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">q-popup-edit</span> <span class="attr">v-model</span>=<span class="string">"props.row.calories"</span> <span class="attr">title</span>=<span class="string">"Update calories"</span> <span class="attr">buttons</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">q-input</span> <span class="attr">type</span>=<span class="string">"number"</span> <span class="attr">v-model</span>=<span class="string">"props.row.calories"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">q-popup-edit</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"fat"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.fat &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"carbs"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.carbs &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"protein"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.protein &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"sodium"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.sodium &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"calcium"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.calcium &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">q-td</span> <span class="attr">key</span>=<span class="string">"iron"</span> <span class="attr">:props</span>=<span class="string">"props"</span>&gt;</span>&#123;&#123; props.row.iron &#125;&#125;<span class="tag">&lt;/<span class="name">q-td</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">q-tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">q-table</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="Vue-Properties"><a href="#Vue-Properties" class="headerlink" title="Vue Properties"></a>Vue Properties</h2><p>Supports <code>v-model</code> which should be bound to a String or Number (depending on <code>type</code> property used) in your scope.</p>
-<table>
-<thead>
-<tr>
-<th>Vue Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>title</code></td>
-<td>String</td>
-<td>(Optional) Title to display</td>
-</tr>
-<tr>
-<td><code>buttons</code></td>
-<td>Boolean</td>
-<td>(Optional) Show Set &amp; Cancel buttons</td>
-</tr>
-<tr>
-<td><code>label-set</code></td>
-<td>String</td>
-<td>Override label for “Set” button</td>
-</tr>
-<tr>
-<td><code>label-cancel</code></td>
-<td>String</td>
-<td>Override label for “Cancel” button</td>
-</tr>
-<tr>
-<td><code>color</code></td>
-<td>String</td>
-<td>One from <a href="/components/color-palette.html">Quasar Color Palette</a> to apply for inner input and buttons</td>
-</tr>
-<tr>
-<td><code>validate(val)</code></td>
-<td>Function</td>
-<td>Function to determine if input is correct, and in such case the value is saved, otherwise the edit is cancelled</td>
-</tr>
-<tr>
-<td><code>persistent</code></td>
-<td>Boolean</td>
-<td>Do not close popup if clicking outside of it</td>
-</tr>
-<tr>
-<td><code>disable</code></td>
-<td>Boolean</td>
-<td>Disable popup</td>
-</tr>
-</tbody>
-</table>
-<h2 id="Vue-Events"><a href="#Vue-Events" class="headerlink" title="Vue Events"></a>Vue Events</h2><table>
-<thead>
-<tr>
-<th>Vue Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>@show</code></td>
-<td>Triggered after opening popup.</td>
-</tr>
-<tr>
-<td><code>@hide</code></td>
-<td>Triggered after closing popup.</td>
-</tr>
-<tr>
-<td><code>@save(val, initialValue)</code></td>
-<td>Edit is successful and the value gets saved</td>
-</tr>
-<tr>
-<td><code>@cancel(val, initialValue)</code></td>
-<td>Edit has been cancelled and the value gets reverted to its original form</td>
 </tr>
 </tbody>
 </table>
